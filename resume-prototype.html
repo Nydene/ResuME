@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Resume Review UI</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background-color: #f5f3ff;
+    }
+    .top-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 60px;
+      background-color: #1e0734;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 30px;
+      border-bottom: 2px solid #d7c7fa;
+      z-index: 10;
+    }
+    .logo {
+      position: absolute;
+      left: 20px;
+      height: 35px;
+    }
+    .top-content {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    .left-panel {
+      width: 220px;
+      background-color: #1e0734;
+      color: white;
+      padding: 20px;
+    }
+    .file-list {
+      list-style: none;
+      padding-left: 0;
+    }
+    .file-list li {
+      padding: 6px 0;
+    }
+    .center-panel {
+      flex: 1;
+      background-color: #f4efff;
+      padding: 30px;
+      overflow-y: auto;
+    }
+    .resume-preview img {
+      max-width: 100%;
+      height: auto;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      border-radius: 10px;
+    }
+    .right-panel {
+      width: 300px;
+      background-color: #f1edff;
+      padding: 20px;
+      overflow-y: auto;
+    }
+    .tabs {
+      display: flex;
+      gap: 10px;
+      margin: 10px 0;
+    }
+    .tab {
+      background-color: #ddd1f5;
+      padding: 5px 10px;
+      border-radius: 10px;
+      font-weight: 500;
+    }
+    .suggestions {
+      margin-top: 10px;
+    }
+    .suggestion {
+      background-color: white;
+      border-left: 5px solid #c8b2f7;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      position: relative;
+    }
+    .progress-bar {
+      height: 6px;
+      border-radius: 3px;
+      margin-bottom: 5px;
+    }
+    .progress-red { background-color: #ff4d4f; width: 25%; }
+    .progress-yellow { background-color: #faad14; width: 60%; }
+    .progress-green { background-color: #52c41a; width: 90%; }
+  </style>
+</head>
+<body>
+  <div class="top-bar">
+    <img src="logo.png" alt="Logo" class="logo" />
+    <div class="top-content">
+      <button style="font-weight: 500; font-size: 16px; background-color: white; color: #5d4297; border: 1px solid #d7c7fa; padding: 6px 16px; border-radius: 20px; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+        🎯 Goals
+      </button>
+      <div style="font-weight: 600; font-size: 16px; background-color: #c8b2f7; color: white; padding: 8px 16px; border-radius: 20px; box-shadow: 0 2px 6px rgba(160, 132, 200, 0.3);">
+        🏆 87 Overall Score
+      </div>
+    </div>
+  </div>
+
+  <div style="display: flex; margin-top: 60px; height: calc(100vh - 60px); overflow: hidden;">
+    <div class="left-panel">
+      <h3>EXPLORE</h3>
+      <ul class="file-list">
+        <li>resumates</li>
+        <li>resumates.xlsx</li>
+        <li>resumating.xlsx</li>
+        <li>Resume.txt</li>
+      </ul>
+    </div>
+
+    <div class="center-panel">
+      <div class="resume-preview">
+        <img src="sample.png" alt="Resume Preview" />
+      </div>
+    </div>
+
+    <div class="right-panel">
+      <h2>Review suggestions</h2>
+      <div class="tabs">
+        <div class="tab">Relevance</div>
+        <div class="tab">Readability</div>
+        <div class="tab">Impact</div>
+        <div class="tab">ATS Check</div>
+      </div>
+
+      <div class="suggestions">
+        <div class="suggestion">
+          <div class="progress-bar progress-red"></div>
+          🔤 Choose a different word: <strong>major</strong>
+        </div>
+        <div class="suggestion">
+          <div class="progress-bar progress-yellow"></div>
+          ❌ Remove the phrase: <strong>that people</strong>
+        </div>
+        <div class="suggestion">
+          <div class="progress-bar progress-green"></div>
+          📝 Rephrase: <em>According to the results of the survey, 87.5%...</em>
+        </div>
+        <div class="suggestion">
+          <div class="progress-bar progress-yellow"></div>
+          🔁 Choose a different word: <strong>important</strong>
+        </div>
+        <div class="suggestion">
+          <div class="progress-bar progress-green"></div>
+          ✏️ Add a comma after <em>then</em>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
