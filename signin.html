@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+  <title>ResuMe – Sign In</title>
+
+  <!-- Bootstrap 5 -->
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  />
+
+  <style>
+    :root {
+      --primary: #563B69;
+      --text: #212529;
+      --overlay: rgba(0,0,0,0.6);
+    }
+
+    html, body {
+      height: 100%;
+      margin: 0;
+      font-family: 'Poppins', 'Segoe UI', sans-serif;
+      font-size: 1rem;
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    body {
+      background: linear-gradient(var(--overlay), var(--overlay)),
+                  url('bg.jpg') center/cover no-repeat fixed;
+      display: flex;
+      align-items: center;
+    }
+
+    .left-panel {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 2rem;
+    }
+    .left-panel img.logo {
+      max-width: 380px;
+      width: 100%;
+      margin-bottom: 0.1rem; /* almost touching subtitle */
+    }
+    .left-panel h2 {
+      color: white;
+      font-size: 1.35rem;
+      margin: 0;
+      font-weight: 700;
+    }
+
+    .card-container {
+      position: relative;
+      z-index: 1;
+      margin: 0 auto;
+    }
+    .card {
+      border-top: 6px solid var(--primary);
+    }
+
+    .btn-primary {
+      background-color: var(--primary);
+      border-color: var(--primary);
+    }
+
+    /* Header style */
+    .card-body h3 {
+      color: var(--text);
+      font-weight: 700;
+      font-size: 2rem;
+    }
+
+    @media (max-width: 992px) {
+      .left-panel { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container-fluid h-100">
+    <div class="row g-0 justify-content-center h-100">
+
+      <!-- LEFT HALF -->
+      <div class="col-lg-6 d-none d-lg-flex left-panel h-100">
+        <img src="logo.png" alt="ResuMe logo" class="logo" />
+        <h2>Sign in to your account</h2>
+      </div>
+
+      <!-- RIGHT HALF -->
+      <div class="col-lg-4 col-md-5 col-10 mx-auto align-self-center">
+        <div class="card-container">
+          <div class="card shadow">
+            <div class="card-body p-4">
+              <h3 class="mb-4">Sign In</h3>
+              <form>
+                <div class="mb-3">
+                  <label for="email" class="form-label">Email address</label>
+                  <input
+                    type="email"
+                    class="form-control form-control-sm"
+                    id="email"
+                    placeholder="name@example.com"
+                    required
+                  />
+                </div>
+                <div class="mb-3">
+                  <label for="password" class="form-label">Password</label>
+                  <input
+                    type="password"
+                    class="form-control form-control-sm"
+                    id="password"
+                    placeholder="Password"
+                    required
+                  />
+                </div>
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                  <div>
+                    <input type="checkbox" id="remember" />
+                    <label for="remember" class="form-check-label small">Remember me</label>
+                  </div>
+                  <a href="#" class="small">Forgot password?</a>
+                </div>
+                <button type="submit" class="btn btn-primary btn-sm w-100">Sign In</button>
+              </form>
+              <div class="text-center mt-3 small">
+                Not yet registered? <a href="#">Sign Up</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Bootstrap Bundle JS -->
+  <script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
+  ></script>
+</body>
+</html>

@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ResuME Interactive Upload MVP</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+  /* ------------- BASICS ------------------------------------------------ */
+  body{margin:0;font-family:Poppins,sans-serif;background:#290038;}
+  .top-bar{position:fixed;inset:0 0 auto 0;height:60px;background:#290038;
+           display:flex;align-items:center;justify-content:center;padding:0 30px;
+           border-bottom:2px solid #290038;z-index:10;}
+  .logo{position:absolute;left:20px;height:48px;}
+  .btn,.score{font-weight:600;font-size:16px;line-height:1.2;padding:8px 16px;
+              border-radius:20px;display:inline-block;font-family:Poppins;}
+  .btn{background:#fff;color:#290038;border:1px solid #d7c7fa;cursor:pointer;
+       box-shadow:0 2px 4px rgba(0,0,0,.05);}
+  .score{background:#723680;color:#fff;box-shadow:0 2px 6px rgba(160,132,200,.3);
+         display:none;}
+
+  /* ------------- PANELS ------------------------------------------------ */
+  .container{display:flex;margin-top:60px;height:calc(100vh - 60px);overflow:hidden;}
+  .left-panel{width:220px;background:#290038;color:#fff;padding:20px;}
+  .center-panel{flex:1;background:#f4efff;padding:30px;overflow-y:auto;}
+  .right-panel{width:300px;background:#f1edff;padding:20px;overflow-y:auto;
+               display:flex;flex-direction:column;color:#888;position:relative;}
+
+  /* ------------- UPLOAD AREA ------------------------------------------ */
+  .upload-area{border:2px dashed #c8b2f7;padding:40px;text-align:center;
+               border-radius:10px;color:#5d4297;position:relative;}
+  .upload-area input{opacity:0;position:absolute;inset:0;cursor:pointer;}
+  .resume-preview img{max-width:100%;box-shadow:0 2px 8px rgba(0,0,0,.1);
+                      border-radius:10px;}
+
+  /* ------------- RIGHT-PANEL PLACEHOLDER ------------------------------ */
+  .placeholder{flex-grow:1;display:flex;flex-direction:column;align-items:center;
+               justify-content:center;text-align:center;}
+  .placeholder img{width:120px;margin-bottom:4px;}
+
+  /* ------------- SUGGESTIONS UI --------------------------------------- */
+  .suggestions-header{position:sticky;top:0;background:#f1edff;padding-bottom:10px;
+                      z-index:1;width:100%;text-align:center;display:none;
+                      flex-direction:column;align-items:center;}
+  .category-nav{display:flex;gap:8px;margin-bottom:16px;}
+  .pill{background:#ddd1f5;color:#5d4297;padding:8px 12px;border-radius:12px;
+        font-weight:500;display:inline-flex;flex-direction:column;align-items:center;}
+  .mini-bar{height:4px;width:60px;background:#e0dbf8;border-radius:2px;
+            overflow:hidden;margin-top:6px;}
+  .mini-fill{height:100%;background:#7B4F6C;transition:width .3s ease;}
+
+  .suggestions{display:none;width:100%;}
+  .suggestion{background:#fff;border-left:5px solid #7B4F6C;padding:10px;margin-bottom:10px;
+              border-radius:8px;box-shadow:0 1px 3px rgba(0,0,0,.05);cursor:pointer;
+              opacity:0;transform:translateY(20px);animation:pop-in .5s forwards;}
+  .suggestion.used{animation:bounceOutFade .5s forwards!important;}
+
+    /* 1. Make header and card text pure black */
+  .suggestions-title            { color:#000 !important; }   /* “Review Suggestions” */
+  .suggestion                   { color:#000 !important; }   /* body text inside cards */
+
+  /* 2. Keep coloured progress strips at the top of each card */
+  .progress-red    { background:#ff4d4f; width:25%;  height:6px; border-radius:3px; }
+  .progress-yellow { background:#faad14; width:60%;  height:6px; border-radius:3px; }
+  .progress-green  { background:#52c41a; width:90%;  height:6px; border-radius:3px; }
+
+  /* ------------- GOALS MODAL ------------------------------------------ */
+  .goals-modal{position:fixed;inset:0;background:#0008;display:flex;
+               align-items:center;justify-content:center;z-index:9999;}
+  .goals-modal[hidden]{display:none!important;}          /* keep it invisible */
+  .goals-card{width:420px;max-width:90%;background:#fff;border-radius:12px;
+              padding:28px 32px;box-shadow:0 8px 28px rgba(0,0,0,.15);}
+  .goals-card h2{margin:0 0 4px;font-size:22px;color:#1e0734;}
+  .goals-card .subtitle{margin:0 0 20px;color:#555;font-size:14px;}
+  .goals-card section{margin-bottom:24px;}
+  .helper{margin:0 0 8px;font-size:13px;color:#777;}
+  .btn-row{display:flex;flex-wrap:wrap;gap:8px;}
+  .pill.goal{padding:6px 14px;border:1px solid #d7c7fa;border-radius:18px;
+             background:#fff;cursor:pointer;font-size:13px;color:#5d4297;}
+  .pill.goal.active{background:#5d4297;color:#fff;}
+  .footer{display:flex;justify-content:space-between;align-items:center;}
+  .btn-primary{background:#5d4297;color:#fff;border:none;padding:8px 22px;
+               border-radius:6px;cursor:pointer;}
+  
+  /* ==== WebKit browsers (Chrome, Safari, Edge) ==== */
+  ::-webkit-scrollbar {
+    width: 15px;
+    height: 15px;              /* for horizontal scrollbar, if any */
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #f4efff;       /* match your center-panel bg */
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: #7B4F6C; /* your purple */
+    border-radius: 4px;
+    border: 2px solid #f4efff; /* give it a little padding from the track */
+  }
+
+  /* ==== Firefox ==== */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: #7B4F6C #f4efff;
+  }
+
+  /* ------------- OTHER STYLES / ANIMS --------------------------------- */
+  .file-list{list-style:none;margin:10px 0 0;padding-left:0;}
+  .file-list li{padding:6px 0;font-family:"Courier New",monospace;display:flex;
+                align-items:center;}
+  .file-list li::before{content:"📁";margin-right:8px;font-size:1.1em;}
+
+  @keyframes pop-in{to{opacity:1;transform:translateY(0);}}
+  @keyframes bounceOutFade{0%{opacity:1}30%{transform:translateY(-10px)}
+                           100%{opacity:0;transform:translateY(20px)}}
+  </style>
+</head>
+<body>
+
+  <!-- TOP BAR -->
+  <div class="top-bar">
+    <img src="logo.png" alt="ResuME logo" class="logo"/>
+    <div class="top-content">
+      <!-- Goals button hidden at first -->
+      <button id="goals-btn" class="btn" style="display:none">🎯 Goals</button>
+      <div class="score" id="overall-score">🏆 85 Overall Score</div>
+    </div>
+  </div>
+
+  <!-- MAIN LAYOUT -->
+  <div class="container">
+    <div class="left-panel">
+      <h3>Explore</h3>
+      <ul class="file-list" id="file-list"></ul>
+    </div>
+
+    <div class="center-panel">
+      <div class="upload-area" id="upload-area">
+        <p>Drag &amp; drop or click to upload your resume</p>
+        <input type="file" id="resume-input" accept="image/*,.pdf,.doc,.docx"/>
+      </div>
+    </div>
+
+    <!-- RIGHT PANEL -->
+    <div class="right-panel">
+      <div class="placeholder" id="placeholder">
+        <img src="magic_hat.png" alt="Magic Hat"/>
+        <p><strong>Upload your resume to make the magic happen.</strong><br>
+        <small>Suggestions will appear here.</small></p>
+      </div>
+
+      <div class="suggestions-header" id="suggestions-header">
+        <h2 class="suggestions-title">Review Suggestions</h2>
+        <div class="category-nav" id="category-nav">
+          <div class="pill">
+            Relevance
+            <div class="mini-bar"><div class="mini-fill" id="rel-fill" style="width:70%"></div></div>
+          </div>
+          <div class="pill">
+            Readability
+            <div class="mini-bar"><div class="mini-fill" id="read-fill" style="width:50%"></div></div>
+          </div>
+          <div class="pill">
+            Impact
+            <div class="mini-bar"><div class="mini-fill" id="impact-fill" style="width:90%"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="suggestions" id="suggestion-list"></div>
+    </div>
+  </div>
+
+  <!-- GOALS MODAL -->
+  <div id="goals-modal" class="goals-modal" hidden>
+    <div class="goals-card">
+      <h2>Set Goals</h2>
+      <p class="subtitle">Get tailored writing suggestions based on your goals and profession.</p>
+
+      <section>
+        <h4>Domain</h4>
+        <p class="helper">Choose the industry you’re targeting.</p>
+        <div class="btn-row" id="domain-group">
+          <button data-value="tech"         class="pill goal">Tech / IT</button>
+          <button data-value="biz_fin"      class="pill goal">Business &amp; Finance</button>
+          <button data-value="hr"           class="pill goal">HR &amp; Talent</button>
+          <button data-value="arts_design"  class="pill goal">Arts &amp; Design</button>
+          <button data-value="health"       class="pill goal">Healthcare</button>
+          <button data-value="hospitality"  class="pill goal">Hospitality</button>
+        </div>
+      </section>
+
+      <section>
+        <h4>Intent</h4>
+        <p class="helper">What are you applying for?</p>
+        <div class="btn-row" id="intent-group">
+          <button data-value="internship" class="pill goal">Internship / OJT</button>
+          <button data-value="entry"      class="pill goal">Entry-Level</button>
+          <button data-value="switch"     class="pill goal">Career Switch</button>
+          <button data-value="promote"    class="pill goal">Promotion</button>
+          <button data-value="freelance"  class="pill goal">Freelance Gig</button>
+          <button data-value="research"   class="pill goal">Academic Post</button>
+        </div>
+      </section>
+
+      <section>
+        <h4>Formality</h4>
+        <p class="helper">Pick a tone for wording suggestions.</p>
+        <div class="btn-row" id="formality-group">
+          <button data-value="casual"  class="pill goal">Casual</button>
+          <button data-value="neutral" class="pill goal active">Neutral</button>
+          <button data-value="formal"  class="pill goal">Formal</button>
+        </div>
+      </section>
+
+      <div class="footer">
+        <label style="font-size:13px;">
+          <input type="checkbox" id="remember-goals" checked/> Remember my choice
+        </label>
+        <button id="goals-save" class="btn-primary">Done</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  /* ---------------- DATA & ELEMENT HANDLES -------------------- */
+  const suggestionsData = [
+    {text:'🔤 Choose a different word: major',  level:'red',    category:'rel-fill'},
+    {text:'❌ Remove the phrase: that people',  level:'yellow', category:'read-fill'},
+    {text:'📝 Rephrase: According to the results of the survey, 87.5%…', level:'green', category:'impact-fill'},
+    {text:'🔁 Choose a different word: important', level:'yellow', category:'read-fill'},
+    {text:'✏️ Add a comma after then', level:'green', category:'impact-fill'}
+  ];
+
+  let baseScore=85, resumeUploaded=false, goalsSet=false;
+
+  const scoreEl         = document.getElementById('overall-score');
+  const suggestionList  = document.getElementById('suggestion-list');
+  const suggestionsHdr  = document.getElementById('suggestions-header');
+  const placeholder     = document.getElementById('placeholder');
+  const fileListEl      = document.getElementById('file-list');
+  const goalsBtn        = document.getElementById('goals-btn');
+  const goalsModal      = document.getElementById('goals-modal');
+
+  /* ---------------- UTILS ------------------------------------- */
+  function updateScore(){
+    if(baseScore<100){ baseScore++; scoreEl.textContent=`🏆 ${baseScore} Overall Score`; }
+  }
+  function fillBar(id){
+    const bar=document.getElementById(id);
+    const current=parseInt(bar.style.width||'0',10);
+    bar.style.width=Math.min(current+10,100)+'%';
+  }
+  function renderSuggestions(){
+    suggestionList.innerHTML='';
+    suggestionsData.forEach((s,i)=>{
+      const div=document.createElement('div');
+      div.className='suggestion';
+      div.style.animationDelay=`${i*0.3}s`;
+      div.innerHTML=`<div class="progress-bar progress-${s.level}"></div>${s.text}`;
+      div.addEventListener('click',()=>{
+        if(div.classList.contains('used'))return;
+        div.classList.add('used');
+        updateScore(); fillBar(s.category);
+        setTimeout(()=>div.remove(),500);
+      });
+      suggestionList.appendChild(div);
+    });
+  }
+
+  /* ---------------- RESUME UPLOAD ----------------------------- */
+  document.getElementById('resume-input').addEventListener('change', e=>{
+    const file=e.target.files[0]; if(!file) return;
+
+    resumeUploaded=true;                      // flag
+    goalsBtn.style.display='inline-block';    // show 🎯 button
+    placeholder.style.display='none';         // hide magic-hat
+
+    const li=document.createElement('li'); li.textContent=file.name; fileListEl.appendChild(li);
+
+    const reader=new FileReader();
+    reader.onload=ev=>{
+      document.getElementById('upload-area').innerHTML=
+        `<div class="resume-preview"><img src="${ev.target.result}" alt="Uploaded Resume"></div>`;
+    };
+    reader.readAsDataURL(file);
+  });
+
+  /* ---------------- GOALS MODAL LOGIC ------------------------- */
+  /* pill toggling */
+  function toggleActive(e){
+    const btn=e.target;
+    if(!btn.classList.contains('goal')) return;
+    [...btn.parentElement.children].forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+  ['domain-group','intent-group','formality-group']
+    .forEach(id=>document.getElementById(id).addEventListener('click',toggleActive));
+
+  /* open modal */
+  goalsBtn.addEventListener('click',()=>{ goalsModal.hidden=false; });
+
+  /* save + close modal */
+  document.getElementById('goals-save').addEventListener('click',()=>{
+    const pick=g=>document.querySelector(`#${g} .active`)?.dataset.value;
+    const settings={
+      domain:pick('domain-group'),
+      intent:pick('intent-group'),
+      formality:pick('formality-group'),
+      remember:document.getElementById('remember-goals').checked
+    };
+    console.log('Goals saved:',settings);  // ← hook to backend later
+    goalsModal.hidden=true;
+    goalsSet=true;
+
+    /* Only now do we show suggestions */
+    if(resumeUploaded && goalsSet){
+      suggestionsHdr.style.display='flex';
+      suggestionList.style.display='block';
+      scoreEl.style.display='inline-block';
+      renderSuggestions();
+    }
+  });
+
+  /* close modal on Esc */
+  document.addEventListener('keydown',e=>{
+    if(e.key==='Escape' && !goalsModal.hidden) goalsModal.hidden=true;
+  });
+  </script>
+</body>
+</html>
