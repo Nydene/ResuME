@@ -45,10 +45,19 @@
         <div class="card shadow">
           <div class="card-body p-4">
             <h3 class="mb-4">Sign In</h3>
-            <!-- ←—— updated here ——→ -->
             <form action="resume.html" method="get">
+              <div class="mb-3 text-end">
+                <label for="language" class="form-label small">🌐 Language:</label>
+                <select class="form-select form-select-sm w-auto d-inline-block" id="language" name="language">
+                  <option value="English" selected>English</option>
+                  <option value="Tagalog">Tagalog</option>
+                  <option value="Japanese">日本語</option>
+                  <option value="Spanish">Español</option>
+                </select>
+              </div>
+
               <div class="mb-3">
-                <label for="email" class="form-label">Email address</label>
+                <label for="email" class="form-label" id="label-email">Email address</label>
                 <input
                   type="email"
                   class="form-control form-control-sm"
@@ -58,7 +67,7 @@
                 />
               </div>
               <div class="mb-3">
-                <label for="password" class="form-label">Password</label>
+                <label for="password" class="form-label" id="label-password">Password</label>
                 <input
                   type="password"
                   class="form-control form-control-sm"
@@ -70,13 +79,13 @@
               <div class="d-flex justify-content-between align-items-center mb-4">
                 <div>
                   <input type="checkbox" id="remember" />
-                  <label for="remember" class="form-check-label small">Remember me</label>
+                  <label for="remember" class="form-check-label small" id="label-remember">Remember me</label>
                 </div>
-                <a href="#" class="small">Forgot password?</a>
+                <a href="#" class="small" id="forgot-link">Forgot password?</a>
               </div>
-              <button type="submit" class="btn btn-primary btn-sm w-100">Sign In</button>
+              <button type="submit" class="btn btn-primary btn-sm w-100" id="btn-signin">Sign In</button>
             </form>
-            <div class="text-center mt-3 small">
+            <div class="text-center mt-3 small" id="signup-text">
               Not yet registered? <a href="#">Sign Up</a>
             </div>
           </div>
@@ -89,5 +98,52 @@
   <script
     src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
   ></script>
+
+  <script>
+    const translations = {
+      English: {
+        email: "Email address",
+        password: "Password",
+        remember: "Remember me",
+        forgot: "Forgot password?",
+        signin: "Sign In",
+        signup: "Not yet registered? <a href='#'>Sign Up</a>"
+      },
+      Tagalog: {
+        email: "Email mo",
+        password: "Password mo",
+        remember: "Tandaan ako",
+        forgot: "Nakalimutan ang password?",
+        signin: "Mag-sign in",
+        signup: "Di pa nakarehistro? <a href='#'>Mag-sign up</a>"
+      },
+      Japanese: {
+        email: "メールアドレス",
+        password: "パスワード",
+        remember: "ログイン状態を保持する",
+        forgot: "パスワードをお忘れですか？",
+        signin: "サインイン",
+        signup: "まだ登録していませんか？ <a href='#'>サインアップ</a>"
+      },
+      Spanish: {
+        email: "Correo electrónico",
+        password: "Contraseña",
+        remember: "Recuérdame",
+        forgot: "¿Olvidaste tu contraseña?",
+        signin: "Iniciar sesión",
+        signup: "¿Aún no tienes cuenta? <a href='#'>Regístrate</a>"
+      }
+    };
+
+    document.getElementById('language').addEventListener('change', function () {
+      const lang = this.value;
+      document.getElementById("label-email").textContent = translations[lang].email;
+      document.getElementById("label-password").textContent = translations[lang].password;
+      document.getElementById("label-remember").textContent = translations[lang].remember;
+      document.getElementById("forgot-link").textContent = translations[lang].forgot;
+      document.getElementById("btn-signin").textContent = translations[lang].signin;
+      document.getElementById("signup-text").innerHTML = translations[lang].signup;
+    });
+  </script>
 </body>
 </html>
